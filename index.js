@@ -1,12 +1,9 @@
-
 const express = require('express')
 const exphbs  = require('express-handlebars');
-const gamers = require('./readData')
 const fs = require('fs');
 const path = require("path");
 const multer = require("multer");
-
-
+const data=require('./dao/personnagesDao')
 const app = express()
 
 // for handlebars
@@ -39,34 +36,28 @@ upload.single("image"),(req, res) => {
     // verifier s'il s'agit d'unr image si oui on l'ajoute avec son extension sinon on la retire du dossier data
     if (ext === ".png" || ext === ".jpg" || ext === ".jpeg") {
       fs.rename(tempPath, tempPath+ext, err => {
-        if (err) return handleError(err, res)
-        res.status(200)
+        if (err) fs.unlink(tempPath, err => {})
       });
     }else {
       fs.unlink(tempPath, err => {
-        if (err) return handleError(err, res);
         res.status(403).send("Only .png, .jpg, .jpeg files are allowed!");
       });
     }
-                                                                                                            // on enregistre le path de l'image 
-    const newG = { name: req.body.name, Email: req.body.email, Phone: req.body.phone, games: req.body.games, picture: "data/"+path.basename(tempPath)+ext };
-    gamers.push(newG)
-    let json=JSON.stringify(gamers)   // on ecrit les modifications dans le fichier JSON
-    fs.writeFile('public/data/users.json', json, 'utf8', function(err) {
-      if (err) throw err;
-      res.redirect('/');
-    });
+                                                                                              // on enregistre le path de l'image 
+    const newG = { name: req.body.name, email: req.body.email, phone: req.body.phone, games: req.body.games, picture: "data/"+path.basename(tempPath)+ext };
+    data.addNew(newG);
+    res.redirect('/');
   } else {
     fs.unlink(tempPath, err => {
       if (err) return handleError(err, res);
     });
-    res.status(404).send('error');
+    res.status(404).send('fill all fields');
 } 
 });
 
 app.get('/', function (req, res) {
-  res.render('index', {gamers : gamers});
-  console.log(gamers)
+  // res.render('index')
+  data.getAll((arr)=>{res.render('index', {gamers: arr});})
 });
 
 const port = process.env.PORT || 3000
