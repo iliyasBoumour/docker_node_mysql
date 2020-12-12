@@ -1,0 +1,26 @@
+<div class="container">
+   <a href="/addNew">Add Others</a>
+</div>
+
+<div class="table-users">
+   <div class="header">Users</div>
+
+   <table cellspacing="0">
+      <tr>
+         <th>Picture</th>
+         <th>Name</th>
+         <th>Email</th>
+         <th>Phone</th>
+         <th width="230">games</th>
+      </tr>
+      {{#each gamers}}
+      <tr>
+         <td><img src="{{{this.picture}}}" alt="" /></td>
+         <td>{{{this.name}}}</td>
+         <td>{{{this.Email}}}</td>
+         <td>{{{this.Phone}}}</td>
+         <td>{{{this.games}}}</td>
+      </tr>
+      {{/each}}
+   </table>
+</div>
