@@ -11,9 +11,6 @@ module.exports={
         const sql = 'INSERT INTO personnages SET ?';
     const query = connection.query(sql, pers, (err, result) => {
       if (err) throw err;
-      else {
-        console.log(result);
-      }
     });
     }
   };

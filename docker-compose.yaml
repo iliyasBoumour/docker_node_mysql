@@ -1,0 +1,52 @@
+version: '3.7'
+networks:
+  my_network:
+    external: true
+    name: my_network
+volumes: 
+  personnages_volume:
+    external: true
+    name: personnages_volume
+  images_volume:
+    external: true
+    name: images_volume
+services:
+  # Database
+  db:
+    image: mysql
+    container_name: db
+    volumes:
+      - personnages_volume:/var/lib/mysql
+    restart: always
+    ports:
+      - '3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    networks:
+      - my_network
+  # phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: 'root' 
+    networks:
+      - my_network
+  #app
+  app:
+    image: projet
+    restart: always
+    container_name: app
+    links: 
+      - db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root' 
+    ports:
+      - '80:3000'
+    volumes: 
+      - images_volume:/app/public/data
+    networks:
+      - my_network

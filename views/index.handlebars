@@ -3,23 +3,19 @@
 </div>
 
 <div class="table-users">
-   <div class="header">Users</div>
+   <div class="header">Personnages</div>
 
    <table cellspacing="0">
       <tr>
-         <th>Picture</th>
-         <th>Name</th>
-         <th>Email</th>
-         <th>Phone</th>
-         <th width="230">games</th>
+         <th>photo</th>
+         <th>nom</th>
+         <th width="230">caracteristiques</th>
       </tr>
-      {{#each gamers}}
+      {{#each pers}}
       <tr>
          <td><img src="{{{this.picture}}}" alt="" /></td>
          <td>{{{this.name}}}</td>
-         <td>{{{this.email}}}</td>
-         <td>{{{this.phone}}}</td>
-         <td>{{{this.games}}}</td>
+         <td>{{{this.car}}}</td>
       </tr>
       {{/each}}
    </table>

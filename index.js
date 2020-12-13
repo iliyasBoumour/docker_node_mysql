@@ -22,43 +22,41 @@ app.get('/addNew', function (req, res) {
 });
 
 const upload = multer({
-  // rescuperation de l'image et la mettre dans le dossier data
+  // recuperation de l'image du personnage et la mettre dans le dossier data
   dest: "./public/data"
 });
+// supprime l'image du dossier data
+const remove=(path)=>{
+  fs.unlink(path, err => {
+          if (err) return handleError(err, res);
+        });
+}
 
 app.post('/add',
 upload.single("image"),(req, res) => {
-  let tempPath 
-  //verifier si l'utilisateur a saisi toutes les donnees (y'en a aussi une verification au niveau du front)
-  if (req.body.name && req.body.email && req.body.phone && req.body.games )  {  
-    tempPath=req.file.path;
+  let tempPath =req.file.path;
+    //recuper le type du fichier
     ext=path.extname(req.file.originalname).toLowerCase();
     // verifier s'il s'agit d'unr image si oui on l'ajoute avec son extension sinon on la retire du dossier data
     if (ext === ".png" || ext === ".jpg" || ext === ".jpeg") {
       fs.rename(tempPath, tempPath+ext, err => {
-        if (err) fs.unlink(tempPath, err => {})
+        if (err) remove(tempPath)
       });
     }else {
-      fs.unlink(tempPath, err => {
-        res.status(403).send("Only .png, .jpg, .jpeg files are allowed!");
-      });
+        remove(tempPath)
+        res.status(403).send("seul les fichiers .png, .jpg, .jpeg qui sont accepte!");
     }
-                                                                                              // on enregistre le path de l'image 
-    const newG = { name: req.body.name, email: req.body.email, phone: req.body.phone, games: req.body.games, picture: "data/"+path.basename(tempPath)+ext };
-    data.addNew(newG);
+                                                            // on enregistre le path de l'image 
+    const newP = { name: req.body.name,  car: req.body.car, picture: "data/"+path.basename(tempPath)+ext };
+    data.addNew(newP)
     res.redirect('/');
-  } else {
-    fs.unlink(tempPath, err => {
-      if (err) return handleError(err, res);
-    });
-    res.status(404).send('fill all fields');
-} 
 });
 
 app.get('/', function (req, res) {
-  // res.render('index')
-  data.getAll((arr)=>{res.render('index', {gamers: arr});})
+  data.getAll((arr)=>{res.render('index', {pers: arr});})
 });
+
+
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
